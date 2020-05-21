@@ -2,6 +2,7 @@
 import turtle
 import math
 import random
+from time import sleep
 from pip._vendor.distlib.compat import raw_input
 #screen set up
 
@@ -50,12 +51,30 @@ player.shape("triangle")
 player.penup()
 player.speed(0)
 player.setposition(-270,-270)
-#coin
+#coin1
 coin = turtle.Turtle()
 coin.shape("coin.gif")
 coin.penup()
 coin.speed(0)
 coin.setposition(270,-270)
+
+#coin2
+
+coin2 = turtle.Turtle()
+coin2.shape("coin.gif")
+coin2.penup()
+coin2.speed(0)
+coin2.setposition(270,270)
+coin2.hideturtle()
+
+#finishline
+finish = turtle.Turtle()
+finish.shape("square")
+finish.color("blue")
+finish.penup()
+finish.speed(0)
+finish.setposition(-270,270)
+
 #create goals
 maxGoals = 6
 goals = []
@@ -67,13 +86,23 @@ for count in range (maxGoals):
     goals[count].speed(0)
     shipa = random.randint(0,9)
     shipb = random.randint(0,9)
+    if shipa == 0 and shipb == 0:
+        shipb = random.randint(0,9)
+    if shipa == 9 and shipb == 0:
+        shipb = random.randint(0,9)
     goals[count].setposition(shipxcor[shipa], shipycor[shipb])
     goals[count].showturtle()
 #set speed
 speed = 0
 
 #define Functions
-
+win1 = 0
+win2 = 0
+win3 = 0
+def win():
+    if win1 == 1 and win2 == 1:
+        print("YOU HAVE ESCAPED FROM PACMAN")
+        sleep(1000)
 def turnleft(): #turn left
     player.left(90)
 def turnright(): #turn right
@@ -83,7 +112,7 @@ def increasespeed(): #speedup
 def back(): #drop bomb
     player.forward(-60)
 def isCollision(t1, t2): #collision checking
-    d = math.sqrt(math.pow(player.xcor() - goals[count].xcor(), 2) + math.pow(player.ycor() - goals[count].ycor(), 2))
+    d = math.sqrt(math.pow(t1.xcor() - t2.xcor(), 2) + math.pow(t1.ycor() - t2.ycor(), 2))
     if d < 20:
         return True
     else:
@@ -119,6 +148,14 @@ while True:
     for count in range(maxGoals):
         if isCollision(player, goals[count]):
             player.setposition(-270,-270)
-
+    if isCollision(player, coin):
+        coin.hideturtle()
+        coin2.showturtle()
+        win1 = 1
+    if isCollision(player, coin2):
+        coin2.hideturtle()
+        win2 = 1
+    if isCollision(player, finish):
+        win()
 
 delay = raw_input("press enter to end it")
